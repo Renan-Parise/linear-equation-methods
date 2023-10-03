@@ -60,7 +60,7 @@ def fixed_point_iteration(x0, tol, max_iter):
     step = 1
 
     while step <= max_iter:
-        x1 = x0 - (x0**3 - 9*x0 + 3) / (3*x0**2 - 9)
+        x1 = (x0**3 + 3) / 9
         error_margin = abs(x1 - x0)
         
         results.append([step, x0, x1, error_margin])
@@ -86,7 +86,7 @@ def newton_raphson(x0, tol, max_iter):
         x1 = x0 - fx0 / dfx0
         error_margin = abs(x1 - x0)
 
-        results.append([step, x0, fx0, dfx0, x1, error_margin])
+        results.append([step, x0, x1, error_margin])
 
         if error_margin < tol:
             break
@@ -95,7 +95,7 @@ def newton_raphson(x0, tol, max_iter):
         step += 1
 
     decimal_places = 3
-    df = pd.DataFrame(results, columns=["k", "xk", "f(xk)", "f'(xk)", "xk+1", "|xk+1 - xk|"])
+    df = pd.DataFrame(results, columns=["k", "xk", "xk+1", "|xk+1 - xk|"])
     df = df.round(decimals=decimal_places)
     return df
 
@@ -104,22 +104,20 @@ initial_interval = [0, 1]
 initial_guess = 0.5
 max_iterations = 30
 
-# Bisection
 bisection_df = bisection(initial_interval[0], initial_interval[1], tolerance)
-print("Bisection Method:")
+print("Método de Bissecção:")
 print(bisection_df)
+print("\nEsse acaba quando o valor de xk+1 - xk é totalmente 0.\n")
 
-# False Position
 false_position_df = false_position(initial_interval[0], initial_interval[1], tolerance)
-print("\nFalse Position Method:")
+print("\nMétodo da posição falsa:")
 print(false_position_df)
+print("\nEsse acaba quando o valor de xk+1 - xk começa a repetir.\n")
 
-# Fixed-Point Iteration
 fixed_point_df = fixed_point_iteration(initial_guess, tolerance, max_iterations)
-print("\nFixed-Point Iteration Method:")
+print("\nMétodo de iteração do ponto fixo:")
 print(fixed_point_df)
 
-# Newton-Raphson
 newton_raphson_df = newton_raphson(initial_guess, tolerance, max_iterations)
-print("\nNewton-Raphson Method:")
+print("\nMétodo de Newton-Raphson:")
 print(newton_raphson_df)
