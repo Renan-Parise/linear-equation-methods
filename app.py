@@ -1,9 +1,19 @@
 import pandas as pd
 import math
 
+def setDecimal():
+    return 3
+
 def function(x):
-    result = x**3 - 9*x + 3
+    result = x**3 - 9 * x + 3
+    # result = 1 - x * math.log(x)
+    # result = 2**x - 3 * x
+    # result = x**3 + x - 1000
+    # result = math.exp(x) - x - 2
+    # result = 2 * x - math.sin(x)
     return result
+
+casasDecimal = setDecimal()
 
 def bisection(a, b, tol):
     results = []
@@ -25,18 +35,21 @@ def bisection(a, b, tol):
 
         step += 1
 
-    decimal_places = 3
     df = pd.DataFrame(results, columns=["k", "a", "b", "x", "f(a)", "f(b)", "f(x)", "|xk+1 - xk|"])
-    df = df.round(decimals=decimal_places)
+    df = df.round(decimals=casasDecimal)
     return df
 
-def false_position(a, b, tol):
+def positionFalse(a, b, tol):
     results = []
     step = 1
 
     while abs(b - a) > tol:
         fa = function(a)
         fb = function(b)
+        
+        if abs(fb - fa) < 1e-10:
+            break
+        
         c = (a * fb - b * fa) / (fb - fa)
         fc = function(c)
         error_margin = abs(c - a)
@@ -50,12 +63,11 @@ def false_position(a, b, tol):
 
         step += 1
 
-    decimal_places = 3
     df = pd.DataFrame(results, columns=["k", "a", "b", "x", "f(a)", "f(b)", "f(x)", "|xk+1 - xk|"])
-    df = df.round(decimals=decimal_places)
+    df = df.round(decimals=casasDecimal)
     return df
 
-def fixed_point_iteration(x0, tol, max_iter):
+def fixedIteration(x0, tol, max_iter):
     results = []
     step = 1
 
@@ -71,12 +83,11 @@ def fixed_point_iteration(x0, tol, max_iter):
         x0 = x1
         step += 1
 
-    decimal_places = 3
     df = pd.DataFrame(results, columns=["k", "xk", "xk+1", "|xk+1 - xk|"])
-    df = df.round(decimals=decimal_places)
+    df = df.round(decimals=casasDecimal)
     return df
 
-def newton_raphson(x0, tol, max_iter):
+def newton(x0, tol, max_iter):
     results = []
     step = 1
 
@@ -94,30 +105,34 @@ def newton_raphson(x0, tol, max_iter):
         x0 = x1
         step += 1
 
-    decimal_places = 3
     df = pd.DataFrame(results, columns=["k", "xk", "xk+1", "|xk+1 - xk|"])
-    df = df.round(decimals=decimal_places)
+    df = df.round(decimals=casasDecimal)
     return df
 
 tolerance = 1e-5
-initial_interval = [0, 1]
-initial_guess = 0.5
-max_iterations = 30
+init = [0, 1] # x**3 - 9 * x + 3
+# init = [1, 2] # result = 1 - x * math.log(x)
+# init = [1, 3] # result = 2**x - 3 * x
+# init = [5, 7] # x**3 + x - 1000
+# init = [0, 3] # math.exp(x) - x - 2
+# init = [0, 2] # 2 * x - math.sin(x)
+guessInicial = 0.5
+iterMax = 30
 
-bisection_df = bisection(initial_interval[0], initial_interval[1], tolerance)
+dfBisection = bisection(init[0], init[1], tolerance)
 print("Método de Bissecção:")
-print(bisection_df)
+print(dfBisection)
 print("\nEsse acaba quando o valor de xk+1 - xk é totalmente 0.\n")
 
-false_position_df = false_position(initial_interval[0], initial_interval[1], tolerance)
+dfPosition = positionFalse(init[0], init[1], tolerance)
 print("\nMétodo da posição falsa:")
-print(false_position_df)
+print(dfPosition)
 print("\nEsse acaba quando o valor de xk+1 - xk começa a repetir.\n")
 
-fixed_point_df = fixed_point_iteration(initial_guess, tolerance, max_iterations)
+dfFixed = fixedIteration(guessInicial, tolerance, iterMax)
 print("\nMétodo de iteração do ponto fixo:")
-print(fixed_point_df)
+print(dfFixed)
 
-newton_raphson_df = newton_raphson(initial_guess, tolerance, max_iterations)
+dfNewton = newton(guessInicial, tolerance, iterMax)
 print("\nMétodo de Newton-Raphson:")
-print(newton_raphson_df)
+print(dfNewton)
